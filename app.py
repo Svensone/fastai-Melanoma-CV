@@ -50,15 +50,14 @@ else:
 st.title('Skin melanoma - detection')
 st.markdown("""
     ### AI - Computer Vision Recognition with **fastai/pytorch**
-    Classifing   \n
     Dataset: SIIM-ISIC Dataset, 33.126 DICOM-Files
     """)
-st.markdown("""
-    Accuracy on subset of 2000 img train with ResNet34 Architecture: **98%** \n
-    """)
-link1 = 'Model & Data Preprocessing [Github]()'
-link2 = 'Deployment [Github]()'
-st.markdown(link1, unsafe_allow_html=True, )
+# st.markdown("""
+#     Accuracy after training on 5000 images (limited GPU) : **8%** \n
+#     """)
+link1 = 'Model & Data Preprocessing [Github](https://github.com/Svensone/fastai-Melanoma-CV)'
+link2 = 'Deployment [Github](https://github.com/Svensone/fastai-Melanoma-CV/blob/main/04_04_21_%5Bfastaiv2%5D_DICOM_Ver_5_cv_melanoma.ipynb)'
+st.markdown(link1, unsafe_allow_html=True)
 st.markdown(link2, unsafe_allow_html=True)
 st.markdown("""
     ## Test the Model yourself
