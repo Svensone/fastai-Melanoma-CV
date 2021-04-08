@@ -3,7 +3,6 @@
 from fastai.basics import *
 from fastai.vision.all import *
 import torchvision.transforms as T
-
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -12,16 +11,13 @@ import os
 import matplotlib.image as mpimg
 import requests
 from io import BytesIO
-
 import pickle
-
 import pathlib
 from pathlib import Path
 
 import base64
 from PIL import Image
 import PIL.Image
-
 
 # get local css
 ##################
@@ -47,14 +43,11 @@ else:
 
 # Layout App
 ##################
-st.title('Skin melanoma - detection')
+st.title('Skin melanoma - Detection')
 st.markdown("""
-    ### AI - Computer Vision Recognition with **fastai/pytorch**
-    Dataset: SIIM-ISIC Dataset, 33.126 DICOM-Files
+    ### AI - Computer Vision with **fastai/pytorch**
+    **Dataset**: SIIM-ISIC Dataset, 33.126 DICOM-Files
     """)
-# st.markdown("""
-#     Accuracy after training on 5000 images (limited GPU) : **8%** \n
-#     """)
 link1 = 'Model & Data Preprocessing [Github](https://github.com/Svensone/fastai-Melanoma-CV)'
 link2 = 'Deployment [Github](https://github.com/Svensone/fastai-Melanoma-CV/blob/main/04_04_21_%5Bfastaiv2%5D_DICOM_Ver_5_cv_melanoma.ipynb)'
 st.markdown(link1, unsafe_allow_html=True)
@@ -69,7 +62,6 @@ def get_base64_of_bin_file(bin_file):
         with open(bin_file, 'rb') as f:
             data = f.read()
         return base64.b64encode(data).decode()
-
 def set_png_as_page_bg(png_file):
         bin_str = get_base64_of_bin_file(png_file)
         page_bg_img = '''
@@ -80,10 +72,8 @@ def set_png_as_page_bg(png_file):
         }
         </style>
         ''' % bin_str
-
         st.markdown(page_bg_img, unsafe_allow_html=True)
         return
-
 set_png_as_page_bg('assets/bg2.jpg')
 
 #######################################
@@ -108,16 +98,20 @@ def prediction(img, display_img):
     # define get_x and get_y here (see above)
     learn = load_learner("models/2mela_jpg.pkl")
 
-    # Prediction on Image    
-    pred_class, pred_idx, outputs = learn.predict(test_img)
-    proba_ = float(outputs[1]) if str(pred_class) == 0 else float(outputs[0])
-    print(pred_class)
+    # Prediction on Image
+    predict_class = learn.predict(img)[0]
+    predict_prop = learn.predict(img)[2] 
 
+    proba = float(predict_prop[1]) if str(predict_class) == 0 else float(predict_prop[0])
+
+    # pred_class, pred_idx, outputs = learn.predict(img)
+    # proba = float(predict_prop[1]) if str(pred_class) == 0 else float(outputs[0])
+    # proba = int(proba * 100)
     # Display results
-    if str(pred_class) == 0:
-        st.success(f'This is a benign skin deviation, with a probability of {proba}')
+    if str(predict_class == '0'):
+        st.success(f'This is a benign skin deviation, with a probability of {proba} %')
     else:
-        st.success(f'Melanoma detected, this is a malignant skin anomality, with a probability of {proba}')
+        st.success(f'Melanoma detected, this is a malignant skin anomality, with a probability of {proba} %')
         link = '[Melanoma Wikipedia](https://en.wikipedia.org/wiki/Melanoma)'
         st.markdown(link, unsafe_allow_html=True)
 
@@ -135,19 +129,14 @@ if option == option1:
     list_test_img = os.listdir('test_images')
     test_img = st.selectbox(
         'Please select an image:', list_test_img)
-    print(test_img)
     # Read the image
     test_img = test_img
-
     file_path = 'test_images/' + test_img
-    print(file_path)
     img = PILImage.create(file_path)
-    
     # TEST
     ################
     im_test3 = PIL.Image.open(file_path)
     display_img = np.asarray(im_test3)  # Image to display
-    print(img)
     # call predict func with this img as parameters
     prediction(img, display_img)
 
@@ -158,8 +147,6 @@ else:
     if url != '':
         # print(url)
         try:
-    # test url pic
-    # https://volunteerprogramsbali.org/wp-content/uploads/2015/11/news-108.jpg
             # Read image from the url
             response = requests.get(url)
             pil_img = PIL.Image.open(BytesIO(response.content))
@@ -174,3 +161,5 @@ else:
             prediction(tpil, display_img)
         except:
             st.text("Invalid URL")
+link3 = '[Return to Portfolio](https://portfolio-sven.netlify.app/)'
+st.markdown(link3, unsafe_allow_html=True)
