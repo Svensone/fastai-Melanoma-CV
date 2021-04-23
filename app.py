@@ -1,4 +1,3 @@
-
 # from fastai.learner import load_learner
 from fastai.basics import *
 from fastai.vision.all import *
@@ -28,11 +27,7 @@ local_css("style.css")
 
 # adjustment for different systems (share.io PosixPath)
 ################################
-# Option 1: when working on localhost:8501
-# temp = pathlib.PosixPath
-# pathlib.PosixPath = pathlib.WindowsPath
-
-# option 2: for when deploying on share.streamlit.io
+# when deploying on share.streamlit.io
 plt = platform.system()
 if plt == 'Linux':
     pathlib.WindowsPath = pathlib.PosixPath
@@ -88,25 +83,17 @@ def get_y(fname):
 def prediction(img, display_img):
     # display the image
     st.image(display_img, use_column_width=True)
-
     # loading spinner
     with st.spinner('Wait a second .....'):
         time.sleep(3)
-
-#  load Learner
+    #  load Learner
     # error with pickle/ cant load get_x function in datablock
     # define get_x and get_y here (see above)
     learn = load_learner("models/2mela_jpg.pkl")
-
     # Prediction on Image
     predict_class = learn.predict(img)[0]
     predict_prop = learn.predict(img)[2] 
-
     proba = float(predict_prop[1]) if str(predict_class) == 0 else float(predict_prop[0])
-
-    # pred_class, pred_idx, outputs = learn.predict(img)
-    # proba = float(predict_prop[1]) if str(pred_class) == 0 else float(outputs[0])
-    # proba = int(proba * 100)
     # Display results
     if str(predict_class == '0'):
         st.success(f'This is a benign skin deviation, with a probability of {proba} %')
@@ -118,10 +105,8 @@ def prediction(img, display_img):
 #######################################
 # Image Selection
 #######################################
-
 option1 = 'Choose a test image from list'
 option2 = 'Predict your own Image'
-
 option = st.radio('', [option1, option2])
 
 if option == option1:
